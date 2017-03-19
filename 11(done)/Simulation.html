@@ -1,0 +1,435 @@
+<! DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<title>浮力實驗11</title>
+
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="../js/hicharts.js"></script>
+		<script type="text/javascript" src="../js/selectToUISlider.jQuery.js"></script>
+		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../js/function.js"></script> <!--Main Function-->
+		<script type="text/javascript" src="../js/learn.js"></script>
+		<script type="text/javascript" src="../js/bootbox.min.js"></script>
+
+		<link rel="stylesheet" href="../css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" />
+		<link rel="Stylesheet" href="../css/ui.slider.extras.css" type="text/css" />
+		<link rel="Stylesheet" href="../css/layout.css" type="text/css" />
+		<link rel="Stylesheet" href="../css/bootstrap.min.css" type="text/css" />
+		<style type="text/css">
+		fieldset { border:0; margin: 1em; height: 0em;}
+		select {margin-right: 1em; float: left;}
+		.ui-slider {clear: both; top: 0em;}
+		</style>
+
+		<script type="text/javascript">
+		var username = prompt("請輸入使用者代號","");
+		username = "teamC_" + username;
+		var info = "";
+		var expPrefix = "A";              //章節前置
+		var prefix = "";                     //紀錄前置
+		var columncount = 31;             //測驗資料數，用在learn.js
+
+		var ansDa3 = "" + expPrefix + "Da3_";
+		var ansDb3 = "" + expPrefix + "Db3_";
+		var ansDc3 = "" + expPrefix + "Dc3_";
+		var ansDd3 = "" + expPrefix + "Dd3_";
+
+		var ansDe = [];
+		var ansDf = [];
+		for (i = 0; i < 10 ; i ++){
+			ansDe[i] = "" + expPrefix + "De" + (i+1) + "_";
+		}
+		for (i = 0; i < 21 ; i ++){
+			ansDf[i] = "" + expPrefix + "Df" + (i+1) + "_";
+		}
+
+		var ansDg1 = ""  + expPrefix + "Dg1_";
+		var ansDg2 = ""  + expPrefix + "Dg2_";
+		var ansDg3 = ""  + expPrefix + "Dg3_";
+		var ansDg4 = ""  + expPrefix + "Dg4_";
+		var ansDg5 = ""  + expPrefix + "Dg5_";
+		var ansMa1 = ""  + expPrefix + "Ma1_";
+		var ansMa2 = ""  + expPrefix + "Ma2_";
+		var ansMb1 = ""  + expPrefix + "Mb1_";
+		var ansMb2 = ""  + expPrefix + "Mb2_";
+		var ansMb3 = ""  + expPrefix + "Mb3_";
+		var ansMb4 = ""  + expPrefix + "Mb4_";
+		var ansMb5 = ""  + expPrefix + "Mb5_";
+		var ansMb6 = ""  + expPrefix + "Mb6_";
+		var ansMc1 = ""  + expPrefix + "Mc1_";
+		var ansMd1 = ""  + expPrefix + "Md1_";
+		var ansMe1 = ""  + expPrefix + "Me1_";
+		var ansMe2 = ""  + expPrefix + "Me2_";
+		var ansMe3 = ""  + expPrefix + "Me3_";
+		var ansMe4 = ""  + expPrefix + "Me4_";
+		var ansMe5 = ""  + expPrefix + "Me5_";
+		var ansMe6 = ""  + expPrefix + "Me6_";
+		var ansMf1 = ""  + expPrefix + "Mf1_";
+		var ansMg1 = ""  + expPrefix + "Mg2_";
+		var ansMh1 = ""  + expPrefix + "Mh1_";
+		var resultcount = 0;
+		var resultid = "";
+
+		//執行通行碼，通行碼為0000，輸入後移除四項實驗條件的輸入限制
+		$(window).load(function() {
+		var check = "";
+
+		while(check==""){
+			var check = prompt("請輸入通行碼","");
+
+			if(check!="0000")
+				check = "";
+		}
+		$("#exp-suppose").removeAttr("disabled");
+		$("#independent-var").removeAttr("disabled");
+		$("#control-var").removeAttr("disabled");
+		$("#dependent-var").removeAttr("disabled");
+		saveRecord("start");
+    });
+		var genChart = function(type){
+			$('#result_chart_div').highcharts({
+				chart: {
+					type: 'line'
+				},
+				 title: {
+					text: ''
+				},
+				subtitle: {
+					text: ''
+				},
+				xAxis: {
+					categories: [ansDe[0].slice(5), ansDe[1].slice(5),ansDe[2].slice(5), ansDe[3].slice(5), ansDe[4].slice(5), ansDe[5].slice(5), ansDe[6].slice(5)]
+				},
+				plotOptions: {
+					line: {
+						dataLabels: {
+							enabled: true
+						},
+						enableMouseTracking: true
+					}
+				}
+			});
+
+			var $chart=$('#result_chart_div').highcharts();
+			var datas= $(".drawchart").map(function(){return parseFloat($(this).val());});
+			var datas1= $(".drawchart1").map(function(){return parseFloat($(this).val());});
+			var datas2 = $(".drawchart2").map(function(){return parseFloat($(this).val());});
+
+			$chart.addSeries({name:$(".chart-name").val(),data:datas});
+			$chart.addSeries({name:$(".chart-name1").val(),data:datas1});
+			$chart.addSeries({name:$(".chart-name2").val(),data:datas2});
+
+		}
+		$(function(){
+			//setDraggable();
+			//$(".disabled").removeClass("disabled");
+
+			//init 加入影片
+			$("#item").find(".draggable").each(function(index,value){
+				var item_name=$(this).text();//('data');
+				for(var i = 0 ; i <= 7;i++){
+					var res='<video id="'+$(this).attr("id")+"_"+i;
+						res+='" width="400px" height="640px" autobuffer="autobuffer" class="hidden" >';//bordered
+						res+='<source id="Video1src" src="videos/';
+						res+=item_name+"/"+i+".mp4";
+						res+='" type="video/mp4;">';
+						res+="Your browser does not support the video tag.</video>";
+					$("#droppable").append(res);
+				}
+			});
+
+
+			//設置按reset時可拖的東西要放回哪裡
+
+
+
+			$( "#droppable" ).droppable({
+				drop: function( event, ui ) {//彈簧或砝碼放上來了!
+					var obj=ui.draggable;
+					var playing=$(this).find(".playing")[0];
+					var img=$("#initial-img");
+					img.addClass("hidden"); //hide origin.png
+
+					if(obj.attr("id")=="salt"){
+						$("video").addClass("hidden"); //hide all video
+						$("video").removeClass("playing");
+						var lastSrc=$(playing).attr("id");
+						var lastWeight=parseInt(lastSrc[lastSrc.length-1]);
+
+						var thisWeight=lastWeight+1;
+						var thisSrc=lastSrc.substr(0,lastSrc.length-1)+thisWeight;
+						var video=document.getElementById(thisSrc);// 放彈簧
+						$(video).addClass("playing");
+						$(video).removeClass("hidden");  //show video
+						video.play();  //play video
+						resetDragPos(obj);
+						if(thisWeight==7){
+							obj.hide();
+						}
+					/*if(playing){
+						alert("已有物體,請先reset!");
+						resetDragPos(obj);
+						return;
+					}*/
+						//alert("!!!!");
+					}
+					else{
+					//var playing=$(this).find(".playing")[0];
+						if(playing){
+							alert("已有物體,請先reset!");
+							resetDragPos(obj);
+							return;
+						}
+
+						$("video").addClass("hidden"); //hide all video
+						var video=document.getElementById(obj.attr('id')+"_0");// 放彈簧
+						$(video).addClass("playing");
+						$(video).removeClass("hidden");  //show video
+						video.play();  //play video
+						resetDragPos(obj);
+						obj.hide(); //hide 彈簧
+
+					}
+						/*
+
+						*/
+				}
+			});
+
+			$("#reset").click(function(){
+				$("#initial-img").removeClass("hidden");
+				$("video").addClass("hidden");
+				$("video").removeClass("playing");
+				//clearDraggableItem("draggable2")
+				$("#go").removeClass("disabled");
+				clearDraggable();
+				setDraggable();
+			});
+			$("#go").click(function(){
+				var playing=$(".playing")[0];
+				var lastSrc=$(playing).attr("id");
+				var lastWeight=parseInt(lastSrc[lastSrc.length-1]);
+				lastSrc=lastSrc.substr(0,lastSrc.length-1);
+				var thisWeight=1;//lastWeight+1;
+
+				$("video").removeClass("playing");
+				$("video").addClass("hidden");
+
+				var video=document.getElementById(lastSrc+thisWeight);
+				$(video).removeClass("hidden");
+				$(video).addClass("playing");
+				video.play();
+				setDraggableItem("draggable2");
+
+				$(this).addClass("disabled");
+
+			});
+
+
+		});
+		</script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3">
+
+					<div class="row" style="">
+						<div id="item" class="text-center" style="">
+							<p>物體</p>
+							<div class="draggable" id="wood">木塊<br><img src="wood.jpg" class="drag-component"></div>
+							<div class="draggable" id="sand">砂罐<br><img src="bucket.jpg" class="drag-component"></div>
+							<br>
+
+						</div>
+						<div id="" class="text-center" style="">
+
+							<div class="draggable2" id="salt">鹽<br><img src="salt.jpg" class="drag-component"></div>
+						</div>
+					</div>
+					<br>
+					<div class="row text-center">
+						<button id="go" class="btn btn-success disabled" >沒入</button>
+						<button id="reset" class="btn btn-primary disabled" >Reset</button>
+					</div>
+					<br>
+					<div class="row text-center" id="result_img_div" style="min-height:100px;" ></div>
+				</div>
+				<div class="col-md-5">
+					<h4 class="text-center">浮體在不同濃度的鹽水中所受浮力的變化</h4>
+					<div id="droppable" style="text-align:center;">
+						<img src="origin.jpg" width="380px" height="640px" id="initial-img">
+					</div>
+				</div>
+				<div class="col-md-4">
+					</br>
+					<form class="row form-horizontal" id="exp-var-form">
+						<div class="form-group">
+							<label class="col-md-2 control-label small-text">假設</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" id="exp-suppose" placeholder="假設" disabled="disabled">
+							</div>
+						</div>
+						<div class="form-group" >
+							<label class="col-md-2 control-label small-text">操作變因</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" id="independent-var" placeholder="操作變因" disabled="disabled">
+							</div>
+						</div>
+						<div class="form-group" >
+							<label class="col-md-2 control-label small-text">應變變因</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" id="dependent-var" placeholder="應變變因" disabled="disabled">
+							</div>
+						</div>
+						<div class="form-group" >
+							<label class="col-md-2 control-label small-text">控制變因</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" id="control-var" placeholder="控制變因" disabled="disabled">
+							</div>
+						</div>
+					</form>
+					<div class="row">
+						<image id="toggle-exp-form" class="" src="../sort.PNG" onclick="$('#exp-var-form').toggleClass('hidden');" style="visibility:hidden;cursor:pointer;">
+						<hr  style="margin-top:-22px;">
+					</div>
+					<div id="exp-table-div" class="row text-center hidden" style="/*display: none;*/">
+						<h4 class="text-center">實驗設計</h4>
+						<table id="exp-table" class="table table-bordered table-condensed" >
+							<tr class="row">
+								<th class="col-md-">操作變因/應變變因</th><!--  -->
+								<td><input type="text" class="form-control item" idx="1" id="col1" onfocus="saveRecord('ADe1');"/></td>
+								<td><input type="text" class="form-control item" idx="2" id="col2" onfocus="saveRecord('ADe2');"/></td>
+								<td><input type="text" class="form-control item" idx="3" id="col3" onfocus="saveRecord('ADe3');"/></td>
+								<td><input type="text" class="form-control item" idx="4" id="col4" onfocus="saveRecord('ADe4');"/></td>
+								<td><input type="text" class="form-control item" idx="5" id="col5" onfocus="saveRecord('ADe5');"/></td>
+								<td><input type="text" class="form-control item" idx="6" id="col6" onfocus="saveRecord('ADe6');"/></td>
+								<td><input type="text" class="form-control item" idx="7" id="col7" onfocus="saveRecord('ADe7');"/></td>
+							</tr>
+							<tr class="row">
+								<td class="col-md-"><input type="text" class="form-control tb-des chart-name" id="col8" onfocus="saveRecord('ADe8');"/></td><!--後來長度'L(cm)-->
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart" id="tb-ans-0" style="display:none;" onfocus="saveRecord('ADf1');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart" id="tb-ans-1" style="display:none;" onfocus="saveRecord('ADf2');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart" id="tb-ans-2" style="display:none;" onfocus="saveRecord('ADf3');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart" id="tb-ans-3" style="display:none;" onfocus="saveRecord('ADf4');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart" id="tb-ans-4" style="display:none;" onfocus="saveRecord('ADf5');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart" id="tb-ans-5" style="display:none;" onfocus="saveRecord('ADf6');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart" id="tb-ans-6" style="display:none;" onfocus="saveRecord('ADf7');"/></td>
+							</tr>
+							<tr class="row">
+								<td class="col-md-"><input type="text" class="form-control tb-des chart-name1" id="col9" onfocus="saveRecord('ADe9');"/></td><!--後來長度'L(cm)-->
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart1" id="tb-ans-7" style="display:none;" onfocus="saveRecord('ADf8');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart1" id="tb-ans-8" style="display:none;" onfocus="saveRecord('ADf9');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart1" id="tb-ans-9" style="display:none;" onfocus="saveRecord('ADf10');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart1" id="tb-ans-10" style="display:none;" onfocus="saveRecord('ADf11');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart1" id="tb-ans-11" style="display:none;" onfocus="saveRecord('ADf12');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart1" id="tb-ans-12" style="display:none;" onfocus="saveRecord('ADf13');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart1" id="tb-ans-13" style="display:none;" onfocus="saveRecord('ADf14');"/></td>
+							</tr>
+							<tr class="row">
+								<td class="col-md-"><input type="text" class="form-control tb-des chart-name2" id="col10" onfocus="saveRecord('ADe10');"/></td><!--後來長度'L(cm)-->
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart2" id="tb-ans-14" style="display:none;" onfocus="saveRecord('ADf15');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart2" id="tb-ans-15" style="display:none;" onfocus="saveRecord('ADf16');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart2" id="tb-ans-16" style="display:none;" onfocus="saveRecord('ADf17');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart2" id="tb-ans-17" style="display:none;" onfocus="saveRecord('ADf18');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart2" id="tb-ans-18" style="display:none;" onfocus="saveRecord('ADf19');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart2" id="tb-ans-19" style="display:none;" onfocus="saveRecord('ADf20');"/></td>
+								<td class="col-md-"><input type="text" class="form-control tb-ans drawchart2" id="tb-ans-20" style="display:none;" onfocus="saveRecord('ADf21');"/></td>
+							</tr>
+						</table>
+						<button class="btn btn-success pull-right" id="table-finish" onclick="startSimulation($(this));">完成</button>
+					</div>
+					<!--
+					<div class="row text-center " id="result_table_div">
+						<table class="table table-bordered" id="result_table">
+							<tr class="row">
+								<th>紀錄值/物體</th>
+								<th>木塊</th>
+								<th>砂</th>
+								<th>電池</th>
+								<th>黏土塊</th>
+							</tr>
+							<tr class="row">
+								<td >彈簧秤量測物體在空氣中的讀數W0</td>
+								<td><p class="wood hidden">70</p></td>
+								<td><p class="ironsand hidden">45</p></td>
+								<td ><p class="battery hidden">100</p></td>
+								<td ><p class="clay hidden">145</p></td>
+							</tr>
+							<tr class="row">
+								<td class="">彈簧秤量測物體在液體中的讀數W’</td>
+								<td><p class="wood hidden">0</p></td>
+								<td><p class="ironsand hidden">0</p></td>
+								<td><p class="battery hidden">50</p></td>
+								<td><p class="clay hidden">55</p></td>
+							</tr>
+							<tr class="row">
+								<td>物體減輕的重量(W0-W’)</td>
+								<td><p class="wood hidden">70</p></td>
+								<td><p class="ironsand hidden">45</p></td>
+								<td><p class="battery hidden">50</p></td>
+								<td><p class="clay hidden">90</p></td>
+							</tr>
+						</table>
+					</div>
+					-->
+					<div class="row" id="result_chart_div"></div>
+					<!--<div class="row text-center">
+						<button class="btn btn-success hidden" id="simulation-finish">完成</button>
+					</div>-->
+					<div class="row hidden" id="conclusion">
+						<hr>
+						<h4 class="text-center"><strong>結論</strong></h4>
+						<h4>1. 實驗結果</h4>
+						<textarea rows="2" class="form-control" id="summary-1" placeholder="請根據數據回答實驗結果" onfocus="saveRecord('ADg1');"></textarea>
+						<h4>2. 我的假設是...</h4>
+						<textarea rows="2" class="form-control" id="summary-2" onfocus="saveRecord('ADg2');"></textarea></br>
+						<h4>所以根據實驗我
+						<input type="radio" name="summary-sup" value="1" id="s-1" onclick="saveRecord('ADg3');"> <label for="s-1">支持</label>
+						<input type="radio" name="summary-sup" value="0" id="s-0" onclick="saveRecord('ADg4');"> <label for="s-0">不支持</label>
+						 假設
+						</h4>
+						<h4>3. 請根據實驗數據寫出支持/不支持實驗假設的理由</h4>
+						<textarea rows="2" class="form-control" id="summary-3" onfocus="saveRecord('ADg5');"></textarea>
+						</br>
+						<button class="btn btn-success pull-right" id="summary-finish" onclick="saveRecord('ADg6');">完成</button>
+					</div>
+				</div>
+			</div>
+				<div class="row"></div>
+		</div>
+
+		<!--  Modal   -->
+		<div class="modal fade" id="questions">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 id="modal-title"></h4>
+					</div>
+					<div class="modal-body">
+						<textarea id="modal-answer" cols="30" rows="7" class="form-control"></textarea>
+						<input type="hidden" id="target" value="">
+						<input type="hidden" id="saveornot" value="false">
+						<br>
+						<div class="row">
+						<div class="text-right col-md-12">
+						<button type="button" id="modal-save" class="btn btn-primary ">儲存</button>
+						<button type="button" id="modal-cancel" class="btn btn-warning " data-dismiss="modal">關閉</button>
+						</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<font color="red"></font>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		<div class="endpage" id="end">
+			<img id="anspic" src="exp1.png"/>
+		</div>
+	</body>
+</html>

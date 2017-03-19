@@ -1,0 +1,341 @@
+<! DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<title>浮力實驗11</title>
+
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="../js/hicharts.js"></script>
+		<script type="text/javascript" src="../js/selectToUISlider.jQuery.js"></script>
+		<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+		
+		<script type="text/javascript" src="../js/function.js"></script> <!--Main Function-->
+		
+		<script type="text/javascript" src="../js/learn.js"></script>
+				
+		<script type="text/javascript" src="chart.js"></script>
+
+		<link rel="stylesheet" href="../css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" />
+		<link rel="Stylesheet" href="../css/ui.slider.extras.css" type="text/css" />
+		<link rel="Stylesheet" href="../css/layout.css" type="text/css" />
+		<link rel="Stylesheet" href="../css/bootstrap.min.css" type="text/css" />
+		<style type="text/css">
+		fieldset { border:0; margin: 1em; height: 0em;}	
+		select {margin-right: 1em; float: left;}
+		.ui-slider {clear: both; top: 0em;}
+		</style>
+		
+		<script type="text/javascript">
+		
+
+		
+		$(function(){
+			new Learn({mode:false, chart:2 });
+			//setDraggable();
+			//$(".disabled").removeClass("disabled");
+
+			//init 加入影片
+			$("#item").find(".draggable").each(function(index,value){				
+				var item_name=$(this).text();//('data');
+				for(var i = 0 ; i <= 7;i++){				
+					var res='<video id="'+$(this).attr("id")+"_"+i;
+						res+='" width="400px" height="640px" autobuffer="autobuffer" class="hidden" >';//bordered
+						res+='<source id="Video1src" src="videos/';
+						res+=item_name+"/"+i+".mp4";
+						res+='" type="video/mp4;">';					
+						res+="Your browser does not support the video tag.</video>";
+					$("#droppable").append(res);
+				}
+			});
+			
+
+			//設置按reset時可拖的東西要放回哪裡
+			
+
+			
+			$( "#droppable" ).droppable({
+				drop: function( event, ui ) {//彈簧或砝碼放上來了!
+					var obj=ui.draggable;
+					var playing=$(this).find(".playing")[0];
+					var img=$("#initial-img");
+					img.addClass("hidden"); //hide origin.png				
+					
+					if(obj.attr("id")=="salt"){
+						$("video").addClass("hidden"); //hide all video
+						$("video").removeClass("playing");
+						var lastSrc=$(playing).attr("id");
+						var lastWeight=parseInt(lastSrc[lastSrc.length-1]);
+						
+						var thisWeight=lastWeight+1;
+						var thisSrc=lastSrc.substr(0,lastSrc.length-1)+thisWeight;					
+						var video=document.getElementById(thisSrc);// 放彈簧
+						$(video).addClass("playing");
+						$(video).removeClass("hidden");  //show video
+						video.play();  //play video
+						resetDragPos(obj);
+						if(thisWeight==7){
+							obj.hide();
+						}
+					/*if(playing){
+						alert("已有物體,請先reset!");
+						resetDragPos(obj);
+						return;
+					}*/		
+						//alert("!!!!");
+					}
+					else{
+					//var playing=$(this).find(".playing")[0];		
+						if(playing){
+							alert("已有物體,請先reset!");
+							resetDragPos(obj);
+							return;
+						}
+						
+						$("video").addClass("hidden"); //hide all video					
+						var video=document.getElementById(obj.attr('id')+"_0");// 放彈簧
+						$(video).addClass("playing");
+						$(video).removeClass("hidden");  //show video
+						video.play();  //play video
+						resetDragPos(obj);
+						obj.hide(); //hide 彈簧
+					
+					}
+						/*
+						
+						*/
+				}
+			});
+
+			$("#reset").click(function(){
+				$("#initial-img").removeClass("hidden");
+				$("video").addClass("hidden");
+				$("video").removeClass("playing");
+				//clearDraggableItem("draggable2")
+				$("#go").removeClass("disabled");
+				clearDraggable();
+				setDraggable();
+			});
+			$("#go").click(function(){
+				var playing=$(".playing")[0];
+				var lastSrc=$(playing).attr("id");
+				var lastWeight=parseInt(lastSrc[lastSrc.length-1]);
+				lastSrc=lastSrc.substr(0,lastSrc.length-1);
+				var thisWeight=1;//lastWeight+1;
+
+				$("video").removeClass("playing");
+				$("video").addClass("hidden");
+				
+				var video=document.getElementById(lastSrc+thisWeight);
+				$(video).removeClass("hidden");
+				$(video).addClass("playing");
+				video.play();
+				setDraggableItem("draggable2");
+				
+				$(this).addClass("disabled");
+				
+			});
+			
+			
+		});
+		</script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3">
+					
+					<div class="row" style="">
+						<div id="item" class="text-center" style="">
+							<p>物體</p>
+							<div class="draggable" id="wood">木塊<br><img src="wood.jpg" class="drag-component"></div>
+							<div class="draggable" id="sand">砂罐<br><img src="bucket.jpg" class="drag-component"></div>
+							<br>
+							
+						</div>
+						<div id="" class="text-center" style="">
+							
+							<div class="draggable2" id="salt">鹽<br><img src="salt.jpg" class="drag-component"></div>
+						</div>
+					</div>
+					<br>
+					<div class="row text-center">
+						<button id="go" class="btn btn-success disabled" >沒入</button>
+						<button id="reset" class="btn btn-primary disabled" >Reset</button>
+					</div>
+					<br>
+					<div class="row text-center" id="result_img_div" style="min-height:100px;" ></div>
+				</div>
+				<div class="col-md-5">
+					<h4 class="text-center">浮體在不同濃度的鹽水中所受浮力的變化</h4>
+					<div id="droppable" style="text-align:center;">
+						<img src="origin.jpg" width="380px" height="640px" id="initial-img">
+					</div>
+				</div>
+				<div class="col-md-4">
+					</br>
+					<form class="row form-horizontal" id="exp-var-form">
+						<div class="form-group">
+							<label class="col-md-2 control-label small-text">假設</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" id="exp-suppose" placeholder="假設" >
+							</div>
+						</div>
+						<div class="form-group" >
+							<label class="col-md-2 control-label small-text">操作變因</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" id="independent-var" placeholder="操作變因"  >
+							</div>
+						</div>
+						<div class="form-group" >
+							<label class="col-md-2 control-label small-text">應變變因</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" id="dependent-var" placeholder="應變變因">
+							</div>
+						</div>
+						<div class="form-group" >
+							<label class="col-md-2 control-label small-text">控制變因</label>
+							<div class="col-md-9">
+								<input type="text" class="form-control" id="control-var" placeholder="控制變因" >
+							</div>
+						</div>
+					</form>
+					
+					<div class="row">
+						<image id="toggle-exp-form" class="" src="../sort.PNG" onclick="$('#exp-var-form').toggleClass('hidden');" style="visibility:hidden;cursor:pointer;">
+						<hr  style="margin-top:-22px;">
+					</div>
+					
+					<div id="exp-table" class="row" style="display: none;"> <!--   -->						
+						<h4 class="text-center">實驗設計</h4>
+						<table class="table table-bordered table-condensed" >
+							<tr class="row">
+								<td class="col-md-2">操作變因/應變變因</td><!--  -->						
+								<td><input type="text" class="form-control tb-des" idx="1"/></td>
+								<td><input type="text" class="form-control tb-des" idx="2"/></td>
+								<td><input type="text" class="form-control tb-des" idx="3" /></td>
+								<td><input type="text" class="form-control tb-des" idx="4" /></td>
+								<td><input type="text" class="form-control tb-des" idx="5" /></td>
+								<td><input type="text" class="form-control tb-des" idx="6" /></td>
+								<td><input type="text" class="form-control tb-des" idx="7" /></td>
+							</tr>
+							<tr class="row">
+								<td class="col-md-2"><input type="text" class="form-control tb-ind"/></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+							</tr>
+							<tr class="row">
+								<td class="col-md-2"><input type="text" class="form-control tb-ind"/></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+							</tr>
+							<tr class="row">
+								<td class="col-md-2"><input type="text" class="form-control tb-ind"/></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+								<td class="col-md- tb-ans"></td>
+							</tr>
+
+						</table>
+						<button class="btn btn-success pull-right" id="table-finish" >完成</button>
+					</div>
+					<!--
+					<div class="row text-center " id="result_table_div">
+						<table class="table table-bordered" id="result_table">
+							<tr class="row">
+								<th>紀錄值/物體</th>
+								<th>木塊</th>
+								<th>砂</th>
+								<th>電池</th>
+								<th>黏土塊</th>
+							</tr>
+							<tr class="row">
+								<td >彈簧秤量測物體在空氣中的讀數W0</td>
+								<td><p class="wood hidden">70</p></td>
+								<td><p class="ironsand hidden">45</p></td>
+								<td ><p class="battery hidden">100</p></td>
+								<td ><p class="clay hidden">145</p></td>
+							</tr>
+							<tr class="row">
+								<td class="">彈簧秤量測物體在液體中的讀數W’</td>
+								<td><p class="wood hidden">0</p></td>
+								<td><p class="ironsand hidden">0</p></td>
+								<td><p class="battery hidden">50</p></td>
+								<td><p class="clay hidden">55</p></td>
+							</tr>
+							<tr class="row">
+								<td>物體減輕的重量(W0-W’)</td>
+								<td><p class="wood hidden">70</p></td>
+								<td><p class="ironsand hidden">45</p></td>
+								<td><p class="battery hidden">50</p></td>
+								<td><p class="clay hidden">90</p></td>
+							</tr>
+						</table>
+					</div>
+					-->
+					<div class="row" id="result_chart_div"></div>
+					<!--<div class="row text-center">
+						<button class="btn btn-success hidden" id="simulation-finish">完成</button>
+					</div>-->
+					<div class="row" id="exp-summary" style="display: none;" > <!--   -->
+						<hr>
+						<h4 class="text-center"><strong>結論</strong></h4>
+						<h4>1. 實驗結果</h4>
+						<textarea rows="2" class="form-control" id="summary-1" placeholder="請根據數據回答實驗結果"></textarea>
+						<h4>2. 我的假設是...</h4>
+						<textarea rows="2" class="form-control" id="summary-2"></textarea></br>
+						<h4>所以根據實驗我
+						<input type="radio" name="summary-sup" value="1" id="s-1"> <label for="s-1">支持</label>
+						<input type="radio" name="summary-sup" value="0" id="s-0"> <label for="s-0">不支持</label>
+						 假設
+						</h4> 
+						<h4>3. 請根據實驗數據寫出支持/不支持實驗假設的理由</h4>
+						<textarea rows="2" class="form-control" id="summary-3"></textarea>
+						</br>
+						<button class="btn btn-success pull-right" id="summary-finish" >完成</button>
+					</div>
+				</div>
+			</div>
+			
+		</div>	
+		
+		<!--  Modal   -->
+		<div class="modal fade custom-modal" id="questions">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 id="modal-title"></h4>
+					</div>
+					<div class="modal-body">
+						<div id="modal-content" style="text-align: left;"></div>
+						<br>
+						<div class="row">
+							<div class="text-right col-md-12">
+								<button type="button" id="modal-btn1" class="btn btn-primary ">儲存</button>
+								<button type="button" id="modal-btn2" class="btn btn-warning ">關閉</button>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<font color="red"></font>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	</body>
+</html>	
