@@ -1,0 +1,97 @@
+<script type="text/javascript" src="../js/bootbox.min.js"></script>
+
+<script>
+var username = prompt("請輸入使用者代號","");
+username = "teamC_" + username;
+var info = "";
+var expPrefix = "A";              //章節前置
+var prefix = "";                     //紀錄前置
+var columncount = 16;             //測驗資料數，用在learn.js
+
+var ansDa3 = "" + expPrefix + "Da3_";
+var ansDb3 = "" + expPrefix + "Db3_";
+var ansDc3 = "" + expPrefix + "Dc3_";
+var ansDd3 = "" + expPrefix + "Dd3_";
+
+var ansDe = [];
+var ansDf = [];
+for (i = 0; i < 6 ; i ++){
+  ansDe[i] = "" + expPrefix + "De" + (i+1) + "_";
+}
+for (i = 0; i < 8 ; i ++){
+  ansDf[i] = "" + expPrefix + "Df" + (i+1) + "_";
+}
+
+var ansDg1 = ""  + expPrefix + "Dg1_";
+var ansDg2 = ""  + expPrefix + "Dg2_";
+var ansDg3 = ""  + expPrefix + "Dg3_";
+var ansDg4 = ""  + expPrefix + "Dg4_";
+var ansDg5 = ""  + expPrefix + "Dg5_";
+var ansMa1 = ""  + expPrefix + "Ma1_";
+var ansMa2 = ""  + expPrefix + "Ma2_";
+var ansMb1 = ""  + expPrefix + "Mb1_";
+var ansMb2 = ""  + expPrefix + "Mb2_";
+var ansMb3 = ""  + expPrefix + "Mb3_";
+var ansMb4 = ""  + expPrefix + "Mb4_";
+var ansMb5 = ""  + expPrefix + "Mb5_";
+var ansMb6 = ""  + expPrefix + "Mb6_";
+var ansMc1 = ""  + expPrefix + "Mc1_";
+var ansMd1 = ""  + expPrefix + "Md1_";
+var ansMe1 = ""  + expPrefix + "Me1_";
+var ansMe2 = ""  + expPrefix + "Me2_";
+var ansMe3 = ""  + expPrefix + "Me3_";
+var ansMe4 = ""  + expPrefix + "Me4_";
+var ansMe5 = ""  + expPrefix + "Me5_";
+var ansMe6 = ""  + expPrefix + "Me6_";
+var ansMf1 = ""  + expPrefix + "Mf1_";
+var ansMg1 = ""  + expPrefix + "Mg2_";
+var ansMh1 = ""  + expPrefix + "Mh1_";
+var resultcount = 0;
+var resultid = "";
+
+//執行通行碼，通行碼為0000，輸入後移除四項實驗條件的輸入限制
+$(window).load(function() {
+var check = "";
+
+while(check==""){
+  var check = prompt("請輸入通行碼","");
+
+  if(check!="0000")
+    check = "";
+}
+$("#exp-suppose").removeAttr("disabled");
+$("#independent-var").removeAttr("disabled");
+$("#control-var").removeAttr("disabled");
+$("#dependent-var").removeAttr("disabled");
+saveRecord("start");
+});
+var genChart = function(type){
+  $('#result_chart_div').highcharts({
+    chart: {
+      type: 'line'
+    },
+     title: {
+      text: ''
+    },
+    subtitle: {
+      text: ''
+    },
+    xAxis: {
+      categories: [ansDe[0].slice(5), ansDe[1].slice(5),ansDe[2].slice(5),ansDe[3].slice(5),ansDe[4].slice(5),ansDe[5].slice(5)]
+    },
+    plotOptions: {
+      line: {
+        dataLabels: {
+          enabled: true
+        },
+        enableMouseTracking: true
+      }
+    }
+  });
+
+  var $chart=$('#result_chart_div').highcharts();
+  var datas= $(".drawchart1").map(function(){return parseFloat($(this).val());});
+  $chart.addSeries({name:$(".chart-name1").val(),data:datas});
+}
+
+</script>
